@@ -28,7 +28,7 @@ export default function SignupPage() {
     if (role === 'LANDLORD') {
         router.push('/landlord');
     } else {
-        router.push('/');
+        router.push('/dashboard');
     }
   };
 

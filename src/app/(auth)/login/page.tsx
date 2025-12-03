@@ -31,7 +31,7 @@ export default function LoginPage() {
     } else if (role === 'LANDLORD') {
         router.push('/landlord');
     } else {
-        router.push('/');
+        router.push('/dashboard');
     }
   };
 

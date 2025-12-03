@@ -28,7 +28,7 @@ function UserNav() {
   const getDashboardLink = () => {
     if (role === 'ADMIN') return '/admin';
     if (role === 'LANDLORD') return '/landlord';
-    return '/';
+    return '/dashboard';
   }
 
   if (!user) {
