@@ -1,3 +1,58 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "prop1-img1",
+      "description": "Modern house exterior with a garden",
+      "imageUrl": "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxtb2Rlcm4lMjBob3VzZXxlbnwwfHx8fDE3NjQ3NDg2MjF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern house"
+    },
+    {
+      "id": "prop1-img2",
+      "description": "Spacious living room with large windows",
+      "imageUrl": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bGl2aW5nJTIwcm9vbXxlbnwwfHx8fDE3NjQ3MDg5Njl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "living room"
+    },
+    {
+      "id": "prop1-img3",
+      "description": "Modern kitchen with island",
+      "imageUrl": "https://images.unsplash.com/photo-1682888813913-e13f18692019?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtb2Rlcm4lMjBraXRjaGVufGVufDB8fHx8MTc2NDc1ODg2MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern kitchen"
+    },
+    {
+      "id": "prop2-img1",
+      "description": "Cozy apartment building exterior",
+      "imageUrl": "https://images.unsplash.com/photo-1594484208280-efa00f96fc21?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxhcGFydG1lbnQlMjBidWlsZGluZ3xlbnwwfHx8fDE3NjQ3NjI3MTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "apartment building"
+    },
+    {
+      "id": "prop2-img2",
+      "description": "Compact and well-lit living area",
+      "imageUrl": "https://images.unsplash.com/photo-1484154218962-a197022b5858?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxhcGFydG1lbnQlMjBpbnRlcmlvcnxlbnwwfHx8fDE3NjQ2OTU2MTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "apartment interior"
+    },
+    {
+      "id": "prop3-img1",
+      "description": "Suburban family home with a front yard",
+      "imageUrl": "https://images.unsplash.com/photo-1648804657125-3ad830252ca6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzdWJ1cmJhbiUyMGhvbWV8ZW58MHx8fHwxNzY0NzM3NDI2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "suburban home"
+    },
+    {
+      "id": "prop4-img1",
+      "description": "Luxury villa with a swimming pool",
+      "imageUrl": "https://images.unsplash.com/photo-1556630279-0ecfac70eaf2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxsdXh1cnklMjB2aWxsYXxlbnwwfHx8fDE3NjQ2Nzk2NTl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "luxury villa"
+    },
+    {
+      "id": "prop5-img1",
+      "description": "City apartment with a balcony view",
+      "imageUrl": "https://images.unsplash.com/photo-1751469020033-7ee3844f2170?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjaXR5JTIwYXBhcnRtZW50fGVufDB8fHx8MTc2NDY3OTY1OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "city apartment"
+    },
+    {
+      "id": "prop6-img1",
+      "description": "Gated community entrance",
+      "imageUrl": "https://images.unsplash.com/photo-1747187967039-bced171aa247?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxnYXRlZCUyMGNvbW11bml0eXxlbnwwfHx8fDE3NjQ3NjI3MTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "gated community"
+    }
+  ]
 }
