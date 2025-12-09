@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { properties, users, kycVerifications } from '@/lib/data';
 import ListingApprovalTable from './listings/listing-approval-table';
+import { AdminWelcome } from '@/components/admin/admin-welcome';
 
 export default function AdminDashboard() {
   const pendingListings = properties.filter((p) => p.status === 'PENDING');
@@ -47,6 +48,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
+      <AdminWelcome />
       <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
         {stats.map((stat) => (
           <Card key={stat.title}>

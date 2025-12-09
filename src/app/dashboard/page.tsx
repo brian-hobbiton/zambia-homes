@@ -1,115 +1,144 @@
 'use client';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Home, DollarSign, FileText, MessageSquare } from 'lucide-react';
-import Link from 'next/link';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
-import { properties } from '@/lib/data';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default function TenantDashboard() {
-  const { user } = useAuth();
-  // This is mock data. In a real app, you'd fetch this for the logged-in tenant.
-  const rentedProperty = properties[0];
-  const rentDueDate = new Date();
-  rentDueDate.setDate(1);
-  rentDueDate.setMonth(rentDueDate.getMonth() + 1);
+export default function DashboardPage() {
+  const router = useRouter();
+  const { user, isLoading, role } = useAuth();
 
-  const isRentDue = new Date() > new Date(rentDueDate.getFullYear(), rentDueDate.getMonth(), -5);
+  // Redirect based on role after auth is loaded
+  useEffect(() => {
+    if (!isLoading && user) {
+      // Redirect landlords and admins to their dashboards
+      if (user.role === 'landlord') {
+        router.push('/landlord');
+      } else if (user.role === 'admin') {
+        router.push('/admin');
+      }
+    }
+  }, [user, isLoading, router]);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+    );
+  }
 
   if (!user) {
     return (
-        <div className="flex items-center justify-center h-full">
-            <p>Loading user data...</p>
-        </div>
-    )
+      <Card>
+        <CardHeader>
+          <CardTitle>Not Authenticated</CardTitle>
+          <CardDescription>Please log in to view your dashboard.</CardDescription>
+        </CardHeader>
+      </Card>
+    );
   }
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-3xl font-bold font-headline">
-        Welcome back, {user.name.split(' ')[0]}!
-      </h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold font-headline mb-2">
+          Welcome back, {user.firstName || user.username || 'User'}!
+        </h1>
+        <p className="text-muted-foreground">
+          Here's what's happening with your account today.
+        </p>
+      </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">My Property</CardTitle>
-            <Home className="h-4 w-4 text-muted-foreground" />
+          <CardHeader>
+            <CardTitle className="text-sm font-medium">Account Status</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-lg font-bold">{rentedProperty.title}</div>
-            <p className="text-xs text-muted-foreground">
-              {rentedProperty.location}
-            </p>
+            <Badge variant="default" className="capitalize">
+              Active
+            </Badge>
           </CardContent>
         </Card>
+
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Next Rent Due</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          <CardHeader>
+            <CardTitle className="text-sm font-medium">Role</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-lg font-bold">
-              {rentDueDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              ZMW {rentedProperty.rent.toLocaleString()}
-            </p>
+            <Badge variant="secondary" className="capitalize">
+              {role || 'user'}
+            </Badge>
           </CardContent>
         </Card>
+
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Lease Agreement</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
+          <CardHeader>
+            <CardTitle className="text-sm font-medium">Email Verified</CardTitle>
           </CardHeader>
           <CardContent>
-             <Button variant="outline" size="sm" asChild>
-                <Link href="/lease/contract">View Document</Link>
-            </Button>
-          </CardContent>
-        </Card>
-         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Messages</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-lg font-bold">1 Unread</div>
-             <Button variant="outline" size="sm" asChild className="mt-1">
-                <Link href="/messaging">Go to Inbox</Link>
-            </Button>
+            <Badge variant="outline">
+              Not Verified
+            </Badge>
           </CardContent>
         </Card>
       </div>
 
-      <Card className={`shadow-lg ${isRentDue ? 'border-primary' : ''}`}>
+      <Card>
         <CardHeader>
-          <CardTitle className="font-headline">Rent Payment</CardTitle>
+          <CardTitle>Your Information</CardTitle>
           <CardDescription>
-            {isRentDue
-              ? "Your rent is due. Please make a payment to avoid late fees."
-              : "Your next rent payment is not due yet. We'll notify you."}
+            Your account details and profile information
           </CardDescription>
         </CardHeader>
         <CardContent>
-            <div className="flex items-center justify-between p-6 bg-secondary/30 rounded-lg">
-                <div>
-                    <p className="text-muted-foreground">Amount Due</p>
-                    <p className="text-3xl font-bold text-primary">ZMW {rentedProperty.rent.toLocaleString()}</p>
-                </div>
-                <Button size="lg" disabled={!isRentDue} asChild>
-                    <Link href="/lease/checkout">Pay Now</Link>
-                </Button>
+          <dl className="space-y-4">
+            <div>
+              <dt className="font-semibold text-sm text-muted-foreground">Full Name</dt>
+              <dd className="text-lg">{user.fullName || 'Not set'}</dd>
             </div>
+            <div>
+              <dt className="font-semibold text-sm text-muted-foreground">Email</dt>
+              <dd className="text-lg">{user.email}</dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-sm text-muted-foreground">Username</dt>
+              <dd className="text-lg">{user.username || 'Not set'}</dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-sm text-muted-foreground">User ID</dt>
+              <dd className="text-sm font-mono text-muted-foreground">{user.id}</dd>
+            </div>
+          </dl>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>
+            Common tasks you can perform
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2 text-sm">
+            {role === 'landlord' && (
+              <p>• <a href="/landlord/properties/add" className="text-primary hover:underline">Add a new property</a></p>
+            )}
+            {role === 'tenant' && (
+              <p>• <a href="/properties" className="text-primary hover:underline">Browse available properties</a></p>
+            )}
+            <p>• <a href="/messaging" className="text-primary hover:underline">View messages</a></p>
+            <p>• <a href="/profile" className="text-primary hover:underline">Update your profile</a></p>
+          </div>
         </CardContent>
       </Card>
     </div>
   );
 }
+

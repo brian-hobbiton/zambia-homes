@@ -1,105 +1,272 @@
 'use client';
 
+import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { registerAction } from '@/lib/auth';
+import { AuthError, UserCreateDto, GenderType, UserRole } from '@/types/auth';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useAuth } from '@/hooks/use-auth';
-import React from 'react';
-import { Building } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
-export default function SignupPage() {
+export default function RegisterPage() {
   const router = useRouter();
-  const { login } = useAuth();
-  const [role, setRole] = React.useState<'TENANT' | 'LANDLORD'>('TENANT');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
+  const [formData, setFormData] = useState<UserCreateDto>({
+    password: '',
+    gender: 'preferNotToSay',
+    role: 'user',
+  });
 
-  const handleSignup = (e: React.FormEvent) => {
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+
+  function handleSelectChange(name: keyof UserCreateDto, value: string) {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    login(role);
-    if (role === 'LANDLORD') {
-        router.push('/landlord');
-    } else {
-        router.push('/dashboard');
-    }
-  };
+    setError(null);
+    setFieldErrors({});
+    setIsLoading(true);
 
+    try {
+      // Validate required fields
+      if (!formData.email) {
+        throw new AuthError(400, { email: ['Email is required'] }, 'Email is required');
+      }
+      if (!formData.password || formData.password.length < 8) {
+        throw new AuthError(
+          400,
+          { password: ['Password must be at least 8 characters'] },
+          'Password must be at least 8 characters'
+        );
+      }
+
+      const response = await registerAction(formData);
+
+      // Registration successful - redirect to login
+      router.push('/login?registered=true');
+      router.refresh();
+    } catch (err) {
+      if (err instanceof AuthError) {
+        setError(err.message);
+        if (err.errors) {
+          setFieldErrors(err.errors);
+        }
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unexpected error occurred');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="mx-auto max-w-sm w-full shadow-2xl">
-        <CardHeader className="text-center">
-            <div className="flex justify-center items-center mb-4">
-                <Building className="h-8 w-8 text-primary" />
-                <span className="font-bold font-headline text-2xl ml-2">Zambia Homes</span>
-            </div>
-            <CardTitle className="text-2xl font-headline">Create an Account</CardTitle>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md">
+        <Card>
+          <CardHeader className="space-y-2">
+            <CardTitle className="text-2xl">Create account</CardTitle>
             <CardDescription>
-                Join our community. Are you looking for a home or renting one out?
+              Sign up to get started with ZambiaHomes
             </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSignup} className="grid gap-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="first-name">First name</Label>
-                <Input id="first-name" placeholder="Max" required />
+          </CardHeader>
+          <CardContent>
+            {error && (
+              <Alert variant="destructive" className="mb-6">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Email */}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="user@example.com"
+                  value={formData.email || ''}
+                  onChange={handleInputChange}
+                  disabled={isLoading}
+                />
+                {fieldErrors.email && (
+                  <p className="text-sm text-red-500">{fieldErrors.email[0]}</p>
+                )}
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="last-name">Last name</Label>
-                <Input id="last-name" placeholder="Robinson" required />
+
+              {/* Username */}
+              <div className="space-y-2">
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  name="username"
+                  type="text"
+                  placeholder="johndoe"
+                  pattern="^[a-zA-Z0-9_]+$"
+                  title="Username can only contain letters, numbers, and underscores"
+                  value={formData.username || ''}
+                  onChange={handleInputChange}
+                  disabled={isLoading}
+                />
+                {fieldErrors.username && (
+                  <p className="text-sm text-red-500">{fieldErrors.username[0]}</p>
+                )}
               </div>
+
+              {/* First Name */}
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  placeholder="John"
+                  value={formData.firstName || ''}
+                  onChange={handleInputChange}
+                  disabled={isLoading}
+                />
+              </div>
+
+              {/* Last Name */}
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  placeholder="Doe"
+                  value={formData.lastName || ''}
+                  onChange={handleInputChange}
+                  disabled={isLoading}
+                />
+              </div>
+
+              {/* Phone Number */}
+              <div className="space-y-2">
+                <Label htmlFor="phoneNumber">Phone Number</Label>
+                <Input
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  type="tel"
+                  placeholder="+260123456789"
+                  pattern="^[\+]?[0-9\s\-\(\)]+$"
+                  value={formData.phoneNumber || ''}
+                  onChange={handleInputChange}
+                  disabled={isLoading}
+                />
+                {fieldErrors.phoneNumber && (
+                  <p className="text-sm text-red-500">{fieldErrors.phoneNumber[0]}</p>
+                )}
+              </div>
+
+              {/* Gender */}
+              <div className="space-y-2">
+                <Label htmlFor="gender">Gender</Label>
+                <Select
+                  value={formData.gender || 'preferNotToSay'}
+                  onValueChange={(value) =>
+                    handleSelectChange('gender', value as GenderType)
+                  }
+                  disabled={isLoading}
+                >
+                  <SelectTrigger id="gender">
+                    <SelectValue placeholder="Select gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="preferNotToSay">Prefer Not to Say</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Role */}
+              <div className="space-y-2">
+                <Label htmlFor="role">Role</Label>
+                <Select
+                  value={formData.role || 'user'}
+                  onValueChange={(value) =>
+                    handleSelectChange('role', value as UserRole)
+                  }
+                  disabled={isLoading}
+                >
+                  <SelectTrigger id="role">
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="user">User</SelectItem>
+                    <SelectItem value="tenant">Tenant</SelectItem>
+                    <SelectItem value="landlord">Landlord</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Password */}
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={formData.password || ''}
+                  onChange={handleInputChange}
+                  disabled={isLoading}
+                  minLength={8}
+                />
+                <p className="text-xs text-gray-500">
+                  Minimum 8 characters, must include special characters
+                </p>
+                {fieldErrors.password && (
+                  <p className="text-sm text-red-500">{fieldErrors.password[0]}</p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Creating account...' : 'Create account'}
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center text-sm">
+              Already have an account?{' '}
+              <Link href="/login" className="text-blue-600 hover:underline font-medium">
+                Sign in
+              </Link>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" />
-            </div>
-            <div className="grid gap-2">
-              <Label>I am a...</Label>
-              <RadioGroup defaultValue="TENANT" onValueChange={(value) => setRole(value as any)} className="grid grid-cols-2 gap-4">
-                <div>
-                  <RadioGroupItem value="TENANT" id="tenant" className="peer sr-only" />
-                  <Label htmlFor="tenant" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    Tenant
-                  </Label>
-                </div>
-                <div>
-                  <RadioGroupItem value="LANDLORD" id="landlord" className="peer sr-only" />
-                  <Label htmlFor="landlord" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    Landlord
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
-            <Button type="submit" className="w-full">
-              Create an account
-            </Button>
-          </form>
-          <div className="mt-4 text-center text-sm">
-            Already have an account?{' '}
-            <Link href="/login" className="underline">
-              Log in
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
+

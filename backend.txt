@@ -1,0 +1,3051 @@
+{
+  "x-generator": "NSwag v14.6.2.0 (NJsonSchema v11.5.2.0 (Newtonsoft.Json v13.0.0.0))",
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ZambiaHomes.Core",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5191"
+    }
+  ],
+  "paths": {
+    "/api/user/create": {
+      "post": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ZambiaHomesmodulessampleMyEndpoint",
+        "requestBody": {
+          "x-name": "MyRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZambiaHomesmodulessampleMyRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZambiaHomesmodulessampleMyResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/properties/properties": {
+      "post": {
+        "tags": [
+          "Properties",
+          "Properties"
+        ],
+        "operationId": "CreateProperty",
+        "requestBody": {
+          "x-name": "CreatePropertyRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePropertyRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PropertyResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": [
+              "Landlord",
+              "Admin"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Properties",
+          "Properties"
+        ],
+        "operationId": "ListProperties",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "city",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "province",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "propertyType",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ZambiaHomesModulesPropertiesModelsPropertyType"
+                }
+              ]
+            }
+          },
+          {
+            "name": "minPrice",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "decimal",
+              "nullable": true
+            }
+          },
+          {
+            "name": "maxPrice",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "decimal",
+              "nullable": true
+            }
+          },
+          {
+            "name": "minBedrooms",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            }
+          },
+          {
+            "name": "maxBedrooms",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            }
+          },
+          {
+            "name": "furnishingStatus",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ZambiaHomesModulesPropertiesModelsFurnishingStatus"
+                }
+              ]
+            }
+          },
+          {
+            "name": "hasSecurity",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "boreholeWater",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "solarPower",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "availableNow",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PropertyListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/properties/api/properties/{id}": {
+      "delete": {
+        "tags": [
+          "Properties",
+          "Properties"
+        ],
+        "operationId": "DeleteProperty",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": [
+              "Landlord",
+              "Admin"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Properties",
+          "Properties"
+        ],
+        "operationId": "GetProperty",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PropertyResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/properties/properties/{id}": {
+      "put": {
+        "tags": [
+          "Properties",
+          "Properties"
+        ],
+        "operationId": "UpdateProperty",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "UpdatePropertyRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePropertyRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PropertyResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": [
+              "Landlord",
+              "Admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/users/{id}": {
+      "delete": {
+        "tags": [
+          "Users",
+          "Users"
+        ],
+        "operationId": "DeleteUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": [
+              "Admin"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Users",
+          "Users"
+        ],
+        "operationId": "GetUserById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZambiaHomesModulesAuthEndPointsDTOsUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Users",
+          "Users"
+        ],
+        "operationId": "UpdateUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "UpdateUserRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZambiaHomesModulesAuthEndPointsDTOsUpdateUserRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZambiaHomesModulesAuthEndPointsDTOsUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": [
+          "Users",
+          "Users"
+        ],
+        "operationId": "GetAllUsers",
+        "requestBody": {
+          "x-name": "UserListRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZambiaHomesModulesAuthEndPointsDTOsUserListRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZambiaHomesModulesAuthEndPointsDTOsUserListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": [
+              "Admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/users/me": {
+      "get": {
+        "tags": [
+          "Users",
+          "Users"
+        ],
+        "operationId": "GetCurrentUser",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZambiaHomesModulesAuthEndPointsDTOsUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/stats": {
+      "get": {
+        "tags": [
+          "Users",
+          "Users"
+        ],
+        "operationId": "GetUserStats",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZambiaHomesModulesAuthEndPointsDTOsUserStatsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": [
+              "Admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "Authenticate user with email and password",
+        "operationId": "ZambiaHomesModulesAuthEndPointsLogInEndpoint",
+        "requestBody": {
+          "x-name": "LoginRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "Registers a new user with the provided details",
+        "operationId": "ZambiaHomesModulesAuthEndPointsRegistrationEndpoint",
+        "requestBody": {
+          "x-name": "UserCreateDto",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZambiaHomesModulesAuthModelsUserCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZambiaHomesModulesAuthModelsUserResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}/role": {
+      "patch": {
+        "tags": [
+          "Users",
+          "Users"
+        ],
+        "operationId": "UpdateUserRole",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "UpdateUserRoleRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZambiaHomesModulesAuthEndPointsDTOsUpdateUserRoleRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZambiaHomesModulesAuthEndPointsDTOsUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": [
+              "Admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/users/{id}/status": {
+      "patch": {
+        "tags": [
+          "Users",
+          "Users"
+        ],
+        "operationId": "UpdateUserStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "UpdateUserStatusRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZambiaHomesModulesAuthEndPointsDTOsUpdateUserStatusRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZambiaHomesModulesAuthEndPointsDTOsUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": [
+              "Admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/users/me/kyc": {
+      "post": {
+        "tags": [
+          "Users",
+          "Users"
+        ],
+        "operationId": "UploadKYCDocument",
+        "requestBody": {
+          "x-name": "UploadKYCDocumentRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZambiaHomesModulesAuthEndPointsDTOsUploadKYCDocumentRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZambiaHomesModulesAuthEndPointsDTOsKYCDocumentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FastEndpointsErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": [
+              "Landlord"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ZambiaHomesmodulessampleMyResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "fullName": {
+            "type": "string"
+          },
+          "isOver18": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ZambiaHomesmodulessampleMyRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PropertyResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "propertyType": {
+            "$ref": "#/components/schemas/ZambiaHomesModulesPropertiesModelsPropertyType"
+          },
+          "description": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "city": {
+            "type": "string"
+          },
+          "province": {
+            "type": "string",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string"
+          },
+          "securityDeposit": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressResponse"
+          },
+          "geoCoordinates": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/GeoCoordinateResponse"
+              }
+            ]
+          },
+          "bedrooms": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bathrooms": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "parkingSpaces": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "squareMeters": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "furnishingStatus": {
+            "$ref": "#/components/schemas/ZambiaHomesModulesPropertiesModelsFurnishingStatus"
+          },
+          "amenities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hasSecurity": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "boreholeWater": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "solarPower": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "backupGenerator": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "virtualTourUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "floorPlanUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/ZambiaHomesModulesPropertiesModelsPropertyStatus"
+          },
+          "availableFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "minimumLeaseMonths": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "contactPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "viewCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "saveCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inquiryCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "landLordId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "landlordName": {
+            "type": "string",
+            "nullable": true
+          },
+          "landlordAvatar": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "ZambiaHomesModulesPropertiesModelsPropertyType": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Apartment",
+          "House",
+          "Townhouse",
+          "Condo",
+          "Studio",
+          "Villa",
+          "Commercial",
+          "Industrial",
+          "Land",
+          "Room",
+          "Bedsitter",
+          "Duplex",
+          "Mansion"
+        ],
+        "enum": [
+          "apartment",
+          "house",
+          "townhouse",
+          "condo",
+          "studio",
+          "villa",
+          "commercial",
+          "industrial",
+          "land",
+          "room",
+          "bedsitter",
+          "duplex",
+          "mansion"
+        ]
+      },
+      "AddressResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "street": {
+            "type": "string"
+          },
+          "unitNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string"
+          },
+          "province": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullAddress": {
+            "type": "string"
+          }
+        }
+      },
+      "GeoCoordinateResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ZambiaHomesModulesPropertiesModelsFurnishingStatus": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Unfurnished",
+          "SemiFurnished",
+          "FullyFurnished"
+        ],
+        "enum": [
+          "unfurnished",
+          "semiFurnished",
+          "fullyFurnished"
+        ]
+      },
+      "ZambiaHomesModulesPropertiesModelsPropertyStatus": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Draft",
+          "PendingApproval",
+          "Active",
+          "Rented",
+          "UnderMaintenance",
+          "Suspended",
+          "Deleted"
+        ],
+        "enum": [
+          "draft",
+          "pendingApproval",
+          "active",
+          "rented",
+          "underMaintenance",
+          "suspended",
+          "deleted"
+        ]
+      },
+      "CreatePropertyRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "title",
+          "propertyType",
+          "description",
+          "price",
+          "address"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 0,
+            "nullable": false
+          },
+          "propertyType": {
+            "$ref": "#/components/schemas/ZambiaHomesModulesPropertiesModelsPropertyType"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 0,
+            "nullable": false
+          },
+          "price": {
+            "type": "number",
+            "format": "decimal",
+            "minimum": 0.0,
+            "exclusiveMinimum": true
+          },
+          "address": {
+            "nullable": false,
+            "$ref": "#/components/schemas/AddressRequest"
+          },
+          "geoCoordinates": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/GeoCoordinateRequest"
+              }
+            ]
+          },
+          "bedrooms": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 50.0,
+            "minimum": 0.0,
+            "exclusiveMinimum": true
+          },
+          "bathrooms": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 20.0,
+            "minimum": 0.0,
+            "exclusiveMinimum": true
+          },
+          "parkingSpaces": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 20.0,
+            "minimum": 0.0,
+            "nullable": true
+          },
+          "squareMeters": {
+            "type": "number",
+            "format": "decimal",
+            "maximum": 10000.0,
+            "minimum": 0.0,
+            "nullable": true
+          },
+          "furnishingStatus": {
+            "$ref": "#/components/schemas/ZambiaHomesModulesPropertiesModelsFurnishingStatus"
+          },
+          "amenities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hasSecurity": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "boreholeWater": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "solarPower": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "backupGenerator": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "imageUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "virtualTourUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "availableFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "minimumLeaseMonths": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 60.0,
+            "minimum": 1.0
+          },
+          "contactPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactEmail": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "AddressRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "street",
+          "city",
+          "province"
+        ],
+        "properties": {
+          "street": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 0,
+            "nullable": false
+          },
+          "unitNumber": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0,
+            "nullable": false
+          },
+          "province": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0,
+            "nullable": false
+          },
+          "country": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "postalCode": {
+            "type": "string",
+            "maxLength": 20,
+            "nullable": true
+          }
+        }
+      },
+      "GeoCoordinateRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "format": "double",
+            "maximum": 90.0,
+            "minimum": -90.0
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double",
+            "maximum": 180.0,
+            "minimum": -180.0
+          }
+        }
+      },
+      "FastEndpointsErrorResponse": {
+        "type": "object",
+        "description": "the dto used to send an error response to the client",
+        "additionalProperties": false,
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "description": "the http status code sent to the client. default is 400.",
+            "format": "int32",
+            "default": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "the message for the error response",
+            "default": "One or more errors occurred!"
+          },
+          "errors": {
+            "type": "object",
+            "description": "the collection of errors for the current context",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "ZambiaHomesModulesPropertiesEndPointsDeletePropertyRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ZambiaHomesModulesPropertiesEndPointsGetPropertyRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PropertyListResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "properties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PropertyListItem"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PropertyListItem": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "propertyType": {
+            "$ref": "#/components/schemas/ZambiaHomesModulesPropertiesModelsPropertyType"
+          },
+          "price": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "province": {
+            "type": "string"
+          },
+          "bedrooms": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bathrooms": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "furnishingStatus": {
+            "$ref": "#/components/schemas/ZambiaHomesModulesPropertiesModelsFurnishingStatus"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/ZambiaHomesModulesPropertiesModelsPropertyStatus"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PropertyFilterRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "UpdatePropertyRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 4000,
+            "nullable": true
+          },
+          "price": {
+            "type": "number",
+            "format": "decimal",
+            "minimum": 0.01,
+            "nullable": true
+          },
+          "address": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AddressRequest"
+              }
+            ]
+          },
+          "geoCoordinates": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/GeoCoordinateRequest"
+              }
+            ]
+          },
+          "bedrooms": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 50.0,
+            "minimum": 0.0,
+            "nullable": true
+          },
+          "bathrooms": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 20.0,
+            "minimum": 0.0,
+            "nullable": true
+          },
+          "parkingSpaces": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 20.0,
+            "minimum": 0.0,
+            "nullable": true
+          },
+          "furnishingStatus": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ZambiaHomesModulesPropertiesModelsFurnishingStatus"
+              }
+            ]
+          },
+          "status": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ZambiaHomesModulesPropertiesModelsPropertyStatus"
+              }
+            ]
+          },
+          "amenities": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "hasSecurity": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "boreholeWater": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "solarPower": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "backupGenerator": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "imageUrls": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "virtualTourUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "availableFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "minimumLeaseMonths": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 60.0,
+            "minimum": 1.0,
+            "nullable": true
+          },
+          "contactPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactEmail": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ZambiaHomesModulesAuthEndPointsDeleteUserRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ZambiaHomesModulesAuthEndPointsDTOsUserListResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ZambiaHomesModulesAuthEndPointsDTOsUserResponse"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ZambiaHomesModulesAuthEndPointsDTOsUserResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "middleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "gender": {
+            "$ref": "#/components/schemas/ZambiaHomesModulesAuthModelsGenderType"
+          },
+          "role": {
+            "$ref": "#/components/schemas/ZambiaHomesModulesAuthModelsUserRole"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ZambiaHomesModulesAuthModelsAccountStatus"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "age": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "isKYCVerified": {
+            "type": "boolean"
+          },
+          "kycVerifiedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastLoginAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "emailVerifiedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "bio": {
+            "type": "string",
+            "nullable": true
+          },
+          "propertyCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activePropertyCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "currentRental": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PropertyResponse"
+              }
+            ]
+          },
+          "kycDocuments": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ZambiaHomesModulesAuthEndPointsDTOsKYCDocumentResponse"
+            }
+          }
+        }
+      },
+      "ZambiaHomesModulesAuthModelsGenderType": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Male",
+          "Female",
+          "Other",
+          "PreferNotToSay"
+        ],
+        "enum": [
+          "male",
+          "female",
+          "other",
+          "preferNotToSay"
+        ]
+      },
+      "ZambiaHomesModulesAuthModelsUserRole": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Admin",
+          "Tenant",
+          "Landlord",
+          "User"
+        ],
+        "enum": [
+          "admin",
+          "tenant",
+          "landlord",
+          "user"
+        ]
+      },
+      "ZambiaHomesModulesAuthModelsAccountStatus": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Active",
+          "Inactive",
+          "Pending",
+          "Suspended",
+          "Deleted",
+          "KYC_Verification_Required",
+          "KYC_Verification_Pending",
+          "KYC_Verified"
+        ],
+        "enum": [
+          "active",
+          "inactive",
+          "pending",
+          "suspended",
+          "deleted",
+          "kyC_Verification_Required",
+          "kyC_Verification_Pending",
+          "kyC_Verified"
+        ]
+      },
+      "ZambiaHomesModulesAuthEndPointsDTOsKYCDocumentResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "documentType": {
+            "$ref": "#/components/schemas/KYCDocumentType"
+          },
+          "documentNumber": {
+            "type": "string"
+          },
+          "documentUrl": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/KYCDocumentStatus"
+          },
+          "issueDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isValid": {
+            "type": "boolean"
+          },
+          "isExpired": {
+            "type": "boolean"
+          }
+        }
+      },
+      "KYCDocumentType": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "NationalID",
+          "Passport",
+          "DriversLicense",
+          "BusinessLicense",
+          "TitleDeed",
+          "UtilityBill",
+          "BankStatement",
+          "TaxClearance",
+          "Other"
+        ],
+        "enum": [
+          "nationalID",
+          "passport",
+          "driversLicense",
+          "businessLicense",
+          "titleDeed",
+          "utilityBill",
+          "bankStatement",
+          "taxClearance",
+          "other"
+        ]
+      },
+      "KYCDocumentStatus": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Pending",
+          "UnderReview",
+          "Approved",
+          "Rejected",
+          "Expired"
+        ],
+        "enum": [
+          "pending",
+          "underReview",
+          "approved",
+          "rejected",
+          "expired"
+        ]
+      },
+      "ZambiaHomesModulesAuthEndPointsDTOsUserListRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "search": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ZambiaHomesModulesAuthModelsUserRole"
+              }
+            ]
+          },
+          "status": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ZambiaHomesModulesAuthModelsAccountStatus"
+              }
+            ]
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "isKYCVerified": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "createdAfter": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdBefore": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "sortBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "sortOrder": {
+            "type": "string",
+            "nullable": true
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ZambiaHomesModulesAuthEndPointsGetUserByIdRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ZambiaHomesModulesAuthEndPointsDTOsUserStatsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "totalUsers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalLandlords": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalTenants": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalAdmins": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activeUsers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pendingUsers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kycVerifiedLandlords": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "newUsersToday": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "newUsersThisWeek": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "newUsersThisMonth": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          },
+          "tokenExpiry": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user": {
+            "$ref": "#/components/schemas/ZambiaHomesModulesAuthEndPointsDTOsUserResponse"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "example": {
+          "email": "user@example.com",
+          "password": "SecurePass123!",
+          "rememberMe": false
+        },
+        "additionalProperties": false,
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 0,
+            "nullable": false,
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "nullable": false,
+            "example": "SecurePass123!"
+          },
+          "rememberMe": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "ZambiaHomesModulesAuthModelsUserResponseDto": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "email": {
+                "type": "string",
+                "nullable": true
+              },
+              "username": {
+                "type": "string",
+                "nullable": true
+              },
+              "firstName": {
+                "type": "string",
+                "nullable": true
+              },
+              "lastName": {
+                "type": "string",
+                "nullable": true
+              },
+              "middleName": {
+                "type": "string",
+                "nullable": true
+              },
+              "phoneNumber": {
+                "type": "string",
+                "nullable": true
+              },
+              "dateOfBirth": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "avatarUrl": {
+                "type": "string",
+                "nullable": true
+              },
+              "gender": {
+                "$ref": "#/components/schemas/ZambiaHomesModulesAuthModelsGenderType"
+              },
+              "role": {
+                "$ref": "#/components/schemas/ZambiaHomesModulesAuthModelsUserRole"
+              },
+              "status": {
+                "$ref": "#/components/schemas/ZambiaHomesModulesAuthModelsAccountStatus"
+              },
+              "fullName": {
+                "type": "string",
+                "nullable": true
+              },
+              "age": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "lastLoginAt": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "emailVerifiedAt": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "bio": {
+                "type": "string",
+                "nullable": true
+              },
+              "isKYCVerified": {
+                "type": "boolean"
+              },
+              "kycVerifiedAt": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "properties": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/PropertyResponse"
+                }
+              },
+              "rentedProperty": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/PropertyResponse"
+                  }
+                ]
+              },
+              "kycDocuments": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/KYCDocumentDto"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "KYCDocumentDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "documentType": {
+            "$ref": "#/components/schemas/KYCDocumentType"
+          },
+          "documentNumber": {
+            "type": "string"
+          },
+          "documentUrl": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/KYCDocumentStatus"
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isValid": {
+            "type": "boolean"
+          }
+        }
+      },
+      "BaseEntity": {
+        "type": "object",
+        "x-abstract": true,
+        "additionalProperties": false,
+        "properties": {
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ZambiaHomesModulesAuthModelsUserCreateDto": {
+        "type": "object",
+        "example": {
+          "email": "user@example.com",
+          "username": "johndoe",
+          "password": "SecurePass123!",
+          "phoneNumber": "+260123456789",
+          "firstName": "John",
+          "lastName": "Doe",
+          "avatarUrl": null,
+          "middleName": null,
+          "dateOfBirth": null,
+          "gender": "preferNotToSay",
+          "role": "user"
+        },
+        "additionalProperties": false,
+        "required": [
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 256,
+            "minLength": 0,
+            "pattern": "^[^@]+@[^@]+$",
+            "nullable": true,
+            "example": "user@example.com"
+          },
+          "username": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 3,
+            "pattern": "^[a-zA-Z0-9_]+$",
+            "nullable": true,
+            "example": "johndoe"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 8,
+            "pattern": "[\\W_]",
+            "nullable": false,
+            "example": "SecurePass123!"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 0,
+            "pattern": "^[\\+]?[0-9\\s\\-\\(\\)]+$",
+            "nullable": true,
+            "example": "+260123456789"
+          },
+          "firstName": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0,
+            "nullable": true,
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0,
+            "nullable": true,
+            "example": "Doe"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true,
+            "example": null
+          },
+          "middleName": {
+            "type": "string",
+            "nullable": true,
+            "example": null
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "example": null
+          },
+          "gender": {
+            "example": "preferNotToSay",
+            "$ref": "#/components/schemas/ZambiaHomesModulesAuthModelsGenderType"
+          },
+          "role": {
+            "example": "user",
+            "$ref": "#/components/schemas/ZambiaHomesModulesAuthModelsUserRole"
+          }
+        }
+      },
+      "ZambiaHomesModulesAuthEndPointsDTOsUpdateUserRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0,
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0,
+            "nullable": true
+          },
+          "middleName": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0,
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 0,
+            "pattern": "^[\\+]?[0-9\\s\\-\\(\\)]+$",
+            "nullable": true
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "gender": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ZambiaHomesModulesAuthModelsGenderType"
+              }
+            ]
+          },
+          "bio": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0,
+            "nullable": true
+          },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ZambiaHomesModulesAuthEndPointsDTOsUpdateUserRoleRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "role"
+        ],
+        "properties": {
+          "role": {
+            "$ref": "#/components/schemas/ZambiaHomesModulesAuthModelsUserRole"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 0,
+            "nullable": true
+          }
+        }
+      },
+      "ZambiaHomesModulesAuthEndPointsDTOsUpdateUserStatusRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/ZambiaHomesModulesAuthModelsAccountStatus"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 0,
+            "nullable": true
+          }
+        }
+      },
+      "ZambiaHomesModulesAuthEndPointsDTOsUploadKYCDocumentRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "documentType",
+          "documentNumber",
+          "documentUrl",
+          "issueDate",
+          "expiryDate"
+        ],
+        "properties": {
+          "documentType": {
+            "$ref": "#/components/schemas/KYCDocumentType"
+          },
+          "documentNumber": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 0,
+            "nullable": false
+          },
+          "documentUrl": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0,
+            "nullable": false
+          },
+          "thumbnailUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "issueDate": {
+            "type": "string",
+            "format": "date-time",
+            "minLength": 1
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date-time",
+            "minLength": 1
+          },
+          "notes": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 0,
+            "nullable": true
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "JWTBearerAuth": {
+        "type": "http",
+        "description": "Enter a JWT token to authorize the requests...",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

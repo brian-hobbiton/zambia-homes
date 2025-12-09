@@ -20,6 +20,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { generateSummary } from './actions';
 import { useState, useTransition } from 'react';
 import { Loader2, Sparkles } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const amenitiesList = [
   { id: 'garden', label: 'Garden' },
@@ -49,6 +51,7 @@ const formSchema = z.object({
 export default function AddPropertyForm() {
   const [isPending, startTransition] = useTransition();
   const [summaryError, setSummaryError] = useState<string | null>(null);
+  const { user, isLoading } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -67,8 +70,21 @@ export default function AddPropertyForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    // Here you would typically send the data to your backend
+    if (!user) {
+      alert('You must be logged in to add a property');
+      return;
+    }
+
+    const propertyData = {
+      ...values,
+      landlordId: user.id, // Use the logged-in user's ID
+      landlordEmail: user.email,
+      landlordName: user.fullName || user.username,
+    };
+
+    console.log('Property data to submit:', propertyData);
+    // TODO: Send to backend API
+    // Example: await createProperty(propertyData);
   }
 
   const handleGenerateSummary = () => {
@@ -84,16 +100,49 @@ export default function AddPropertyForm() {
       if (result.success) {
         form.setValue('summary', result.summary);
       } else {
-        setSummaryError(result.error);
+        setSummaryError(result.error || 'Failed to generate summary');
       }
     });
   };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!user) {
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <Alert>
+            <AlertDescription>
+              You must be logged in as a landlord to add properties.
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="font-headline">Property Details</CardTitle>
-        <CardDescription>Fill out the form below to list your property. It will be sent for admin approval.</CardDescription>
+        <CardDescription>
+          Fill out the form below to list your property. It will be sent for admin approval.
+        </CardDescription>
+        <div className="mt-4 p-4 bg-muted rounded-lg">
+          <p className="text-sm text-muted-foreground">Listing as:</p>
+          <p className="font-semibold">{user.fullName || user.username}</p>
+          <p className="text-sm text-muted-foreground">{user.email}</p>
+        </div>
       </CardHeader>
       <CardContent>
         <Form {...form}>

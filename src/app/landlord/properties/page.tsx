@@ -28,12 +28,14 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { properties } from '@/lib/data';
 import { placeHolderImages } from '@/lib/placeholder-images';
+import { LandlordWelcome } from '@/components/landlord/landlord-welcome';
 
 export default function LandlordPropertiesPage() {
   const landlordProperties = properties; // In a real app, this would be filtered by landlord ID
 
   return (
     <div>
+      <LandlordWelcome />
       <div className="flex items-center justify-end mb-4">
         <Button asChild>
           <Link href="/landlord/properties/add">

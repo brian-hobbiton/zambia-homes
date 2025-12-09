@@ -14,21 +14,28 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
-import { useRouter } from 'next/navigation';
 
 function UserNav() {
-  const { user, role, logout } = useAuth();
-  const router = useRouter();
+  const { user, role, logout, isLoading } = useAuth();
 
   const handleLogout = () => {
     logout();
-    router.push('/');
   };
   
   const getDashboardLink = () => {
-    if (role === 'ADMIN') return '/admin';
-    if (role === 'LANDLORD') return '/landlord';
+    if (role === 'admin') return '/admin';
+    if (role === 'landlord') return '/landlord';
     return '/dashboard';
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2">
+        <Button variant="ghost" disabled>
+          Loading...
+        </Button>
+      </div>
+    );
   }
 
   if (!user) {
@@ -44,23 +51,31 @@ function UserNav() {
     );
   }
 
+  const displayName = user.fullName || user.username || user.email || 'User';
+  const initials = displayName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-9 w-9">
-            <AvatarImage src={user.avatarUrl} alt={user.name} />
-            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+            <AvatarImage src={user.avatarUrl || undefined} alt={displayName} />
+            <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.name}</p>
+            <p className="text-sm font-medium leading-none">{displayName}</p>
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
             </p>
+            {role && (
+              <p className="text-xs leading-none text-muted-foreground capitalize">
+                {role}
+              </p>
+            )}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -70,9 +85,11 @@ function UserNav() {
             <span>Dashboard</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>
-          <UserIcon className="mr-2 h-4 w-4" />
-          <span>Profile</span>
+        <DropdownMenuItem asChild>
+          <Link href="/profile">
+            <UserIcon className="mr-2 h-4 w-4" />
+            <span>Profile</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
