@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { LoginRequest, LoginResponse, AuthError } from '@/types/auth';
 
-const API_BASE_URL = 'http://localhost:5191';
+const API_BASE_URL = 'https://zambiahomesapi-production.up.railway.app';
 
 /**
  * POST /api/auth/login

@@ -14,7 +14,7 @@ import {
     UserResponseDto,
 } from '@/types/auth';
 
-const API_BASE_URL = 'http://localhost:5191';
+const API_BASE_URL = 'https://zambiahomesapi-production.up.railway.app';
 
 /**
  * Server-side API fetch (has access to environment variables)
@@ -122,6 +122,7 @@ export async function registerAction(
 
         return response;
     } catch (error) {
+        console.log(error)
         if (error instanceof AuthError) {
             throw error;
         }
