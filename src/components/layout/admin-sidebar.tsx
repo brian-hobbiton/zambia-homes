@@ -9,16 +9,22 @@ import {
   ShieldCheck,
   Gavel,
   BadgeCent,
+  Mail,
+  FileText,
+  CheckCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { href: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
+  { href: '/admin/applications', icon: FileText, label: 'Applications' },
+  { href: '/admin/leases', icon: CheckCircle, label: 'Leases' },
   { href: '/admin/listings', icon: Building2, label: 'Listings' },
+  { href: '/admin/inquiries', icon: Mail, label: 'Inquiries' },
+  { href: '/admin/payments', icon: BadgeCent, label: 'Payments' },
   { href: '/admin/verifications', icon: ShieldCheck, label: 'Verifications' },
   { href: '/admin/users', icon: Users, label: 'Users' },
   { href: '/admin/disputes', icon: Gavel, label: 'Disputes' },
-  { href: '/admin/payments', icon: BadgeCent, label: 'Payments' },
 ];
 
 export default function AdminSidebar() {

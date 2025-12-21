@@ -53,9 +53,23 @@ export interface UserResponse {
   username?: string | null;
   firstName?: string | null;
   lastName?: string | null;
-  fullName?: string | null;
-  role: UserRole;
+  middleName?: string | null;
+  phoneNumber?: string | null;
+  dateOfBirth?: string | null;
   avatarUrl?: string | null;
+  gender?: GenderType;
+  role?: UserRole;
+  status?: AccountStatus;
+  fullName?: string | null;
+  age?: number | null;
+  lastLoginAt?: string | null;
+  emailVerifiedAt?: string | null;
+  bio?: string | null;
+  isKYCVerified?: boolean;
+  kycVerifiedAt?: string | null;
+  properties?: unknown[] | null;
+  rentedProperty?: unknown | null;
+  kycDocuments?: unknown[] | null;
 }
 
 export interface UserResponseDto {

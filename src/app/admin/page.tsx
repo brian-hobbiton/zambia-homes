@@ -1,7 +1,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -12,8 +11,16 @@ import {
   Activity,
 } from 'lucide-react';
 import { properties, users, kycVerifications } from '@/lib/data';
-import ListingApprovalTable from './listings/listing-approval-table';
 import { AdminWelcome } from '@/components/admin/admin-welcome';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 
 export default function AdminDashboard() {
   const pendingListings = properties.filter((p) => p.status === 'PENDING');
@@ -67,9 +74,44 @@ export default function AdminDashboard() {
           </Card>
         ))}
       </div>
+
+      {/* Recent Pending Listings */}
       <div>
         <h2 className="text-2xl font-headline font-bold mb-4">Recent Pending Listings</h2>
-        <ListingApprovalTable properties={pendingListings.slice(0, 5)} />
+        <Card>
+          <CardContent className="pt-6">
+            {pendingListings.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Bedrooms</TableHead>
+                    <TableHead>Rent</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {pendingListings.slice(0, 5).map((property) => (
+                    <TableRow key={property.id}>
+                      <TableCell className="font-medium">{property.title}</TableCell>
+                      <TableCell>{property.location}</TableCell>
+                      <TableCell>{property.bedrooms}</TableCell>
+                      <TableCell>ZMW {property.rent.toLocaleString()}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">{property.status}</Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <p className="text-muted-foreground text-center py-4">
+                No pending listings at this time
+              </p>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

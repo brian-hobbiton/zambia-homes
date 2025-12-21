@@ -17,11 +17,21 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { generateSummary } from './actions';
 import { useState, useTransition } from 'react';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Loader2, Sparkles, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { createProperty } from '@/lib/api-properties';
+import { PropertyType, FurnishingStatus } from '@/types/property';
+import { useRouter } from 'next/navigation';
 
 const amenitiesList = [
   { id: 'garden', label: 'Garden' },
@@ -37,6 +47,7 @@ const amenitiesList = [
 
 const formSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters.'),
+  propertyType: z.string().min(1, 'Property type is required.'),
   description: z.string().min(50, 'Description must be at least 50 characters.'),
   summary: z.string().optional(),
   rent: z.coerce.number().positive('Rent must be a positive number.'),
@@ -45,18 +56,24 @@ const formSchema = z.object({
   bedrooms: z.coerce.number().int().min(1, 'Must have at least 1 bedroom.'),
   bathrooms: z.coerce.number().int().min(1, 'Must have at least 1 bathroom.'),
   parkingSpots: z.coerce.number().int().min(0, 'Parking spots cannot be negative.'),
+  furnishingStatus: z.string().optional(),
   amenities: z.array(z.string()).optional(),
 });
 
 export default function AddPropertyForm() {
   const [isPending, startTransition] = useTransition();
+  const [submitPending, setSubmitPending] = useState(false);
   const [summaryError, setSummaryError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
   const { user, isLoading } = useAuth();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
+      propertyType: PropertyType.Apartment,
       description: '',
       summary: '',
       rent: 0,
@@ -65,26 +82,64 @@ export default function AddPropertyForm() {
       bedrooms: 1,
       bathrooms: 1,
       parkingSpots: 0,
+      furnishingStatus: FurnishingStatus.Unfurnished,
       amenities: [],
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!user) {
-      alert('You must be logged in to add a property');
+      setSubmitError('You must be logged in to add a property');
       return;
     }
 
-    const propertyData = {
-      ...values,
-      landlordId: user.id, // Use the logged-in user's ID
-      landlordEmail: user.email,
-      landlordName: user.fullName || user.username,
-    };
+    setSubmitError(null);
+    setSubmitPending(true);
 
-    console.log('Property data to submit:', propertyData);
-    // TODO: Send to backend API
-    // Example: await createProperty(propertyData);
+    try {
+      // Parse location into address components (simple split by comma)
+      const locationParts = values.location.split(',').map(part => part.trim());
+      const street = locationParts[0] || '';
+      const city = locationParts[1] || '';
+      const province = locationParts[2] || 'Lusaka'; // Default to Lusaka if not provided
+
+      const propertyData = {
+        title: values.title,
+        propertyType: values.propertyType as PropertyType,
+        description: values.description,
+        price: values.rent, // Backend expects 'price' not 'rent'
+        address: {
+          street: street || values.location,
+          city: city || 'Lusaka',
+          province: province, // Now always has a value
+        },
+        bedrooms: values.bedrooms,
+        bathrooms: values.bathrooms,
+        parkingSpaces: values.parkingSpots,
+        furnishingStatus: values.furnishingStatus as FurnishingStatus,
+        amenities: values.amenities,
+        contactPhone: user.phoneNumber || undefined,
+        contactEmail: user.email || undefined,
+      };
+
+      console.log('Submitting property:', propertyData);
+
+      const response = await createProperty(propertyData);
+
+      console.log('Property created successfully:', response);
+      setSubmitSuccess(true);
+
+      // Redirect to properties page after a brief delay
+      setTimeout(() => {
+        router.push('/landlord/properties');
+      }, 1500);
+    } catch (error) {
+      console.error('Failed to create property:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create property. Please try again.';
+      setSubmitError(errorMessage);
+    } finally {
+      setSubmitPending(false);
+    }
   }
 
   const handleGenerateSummary = () => {
@@ -145,6 +200,22 @@ export default function AddPropertyForm() {
         </div>
       </CardHeader>
       <CardContent>
+        {submitSuccess && (
+          <Alert className="mb-6 border-green-200 bg-green-50">
+            <CheckCircle2 className="h-4 w-4 text-green-600" />
+            <AlertDescription className="text-green-800">
+              Property submitted successfully! Redirecting to your properties...
+            </AlertDescription>
+          </Alert>
+        )}
+        {submitError && (
+          <Alert className="mb-6 border-red-200 bg-red-50">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-800">
+              {submitError}
+            </AlertDescription>
+          </Alert>
+        )}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
@@ -156,6 +227,31 @@ export default function AddPropertyForm() {
                   <FormControl>
                     <Input placeholder="e.g., Modern Family Home in Woodlands" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="propertyType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Property Type</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select property type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.entries(PropertyType).map(([key, value]) => (
+                        <SelectItem key={value} value={value}>
+                          {key}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -286,6 +382,31 @@ export default function AddPropertyForm() {
 
             <FormField
               control={form.control}
+              name="furnishingStatus"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Furnishing Status</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select furnishing status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.entries(FurnishingStatus).map(([key, value]) => (
+                        <SelectItem key={value} value={value}>
+                          {key.replace(/([A-Z])/g, ' $1').trim()}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="amenities"
               render={() => (
                 <FormItem>
@@ -336,8 +457,22 @@ export default function AddPropertyForm() {
             />
 
             <div className="flex justify-end gap-4">
-                <Button variant="outline" type="button" onClick={() => form.reset()}>Cancel</Button>
-                <Button type="submit">Submit for Approval</Button>
+                <Button variant="outline" type="button" onClick={() => form.reset()} disabled={submitPending || submitSuccess}>Cancel</Button>
+                <Button type="submit" disabled={submitPending || submitSuccess}>
+                  {submitPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : submitSuccess ? (
+                    <>
+                      <CheckCircle2 className="mr-2 h-4 w-4" />
+                      Submitted
+                    </>
+                  ) : (
+                    'Submit for Approval'
+                  )}
+                </Button>
             </div>
           </form>
         </Form>

@@ -8,12 +8,18 @@ import {
   MessageSquare,
   BadgeCent,
   User,
+  Mail,
+  FileText,
+  FileCheck,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { href: '/landlord', icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/landlord/properties', icon: Building2, label: 'Properties' },
+  { href: '/landlord/applications', icon: FileText, label: 'Applications' },
+  { href: '/landlord/leases', icon: FileCheck, label: 'Leases' },
+  { href: '/landlord/inquiries', icon: Mail, label: 'Inquiries' },
   { href: '/landlord/messages', icon: MessageSquare, label: 'Messages' },
   { href: '/landlord/payouts', icon: BadgeCent, label: 'Payouts' },
   { href: '/landlord/profile', icon: User, label: 'Profile & KYC' },

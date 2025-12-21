@@ -52,6 +52,7 @@ async function serverApiFetch<T = unknown>(
                 errorMessage
             );
         } catch (error) {
+            console.log('Error parsing error response:', error);
             if (error instanceof AuthError) throw error;
             throw new AuthError(
                 response.status,

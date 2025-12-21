@@ -10,6 +10,7 @@ const API_BASE_URL = 'http://localhost:5191';
 
 interface RequestOptions extends RequestInit {
   skipAuth?: boolean;
+  optionalAuth?: boolean;
 }
 
 /**
@@ -59,25 +60,38 @@ export async function apiFetch<T = unknown>(
 ): Promise<T> {
   const {
     skipAuth = false,
+    optionalAuth = false,
     ...fetchOptions
   } = options;
 
   const url = `${API_BASE_URL}${endpoint}`;
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
     ...((fetchOptions.headers as Record<string, string>) || {}),
   };
 
+  // Only set Content-Type for requests with a body (POST, PUT, PATCH)
+  const method = (fetchOptions.method || 'GET').toUpperCase();
+  if (method !== 'GET' && method !== 'DELETE' && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json';
+  }
+
+  console.log(`API Fetch: ${fetchOptions.method || 'GET'} ${url}`);
+  console.log('Options:', fetchOptions);
+
   // Attach JWT token if not skipping auth
-  if (!skipAuth) {
-    const token = getTokenFromStorage();
-    if (!token) {
+  const token = getTokenFromStorage();
+  if (!skipAuth && !token) {
+    if (!optionalAuth) {
       // No token, redirect to home
       if (typeof window !== 'undefined') {
-        window.location.href = '/';
+        // Prevent infinite loop if already on home page
+        if (window.location.pathname !== '/') {
+          window.location.href = '/';
+        }
       }
       throw new AuthError(401, undefined, 'Not authenticated');
     }
+  } else if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
@@ -94,11 +108,15 @@ export async function apiFetch<T = unknown>(
       });
       clearAuthTokens();
       if (typeof window !== 'undefined') {
-        window.location.href = '/';
+        // Prevent infinite loop if already on home page
+        if (window.location.pathname !== '/') {
+          window.location.href = '/';
+        }
       }
       throw new AuthError(401, undefined, 'Session expired. Please log in again.');
     }
 
+    console.log(`API Response: ${response.status} ${response.statusText} for ${url}`);
     // Handle other non-2xx responses
     if (!response.ok) {
       return handleErrorResponse(response);
@@ -124,10 +142,19 @@ export async function apiFetch<T = unknown>(
 async function handleErrorResponse(response: Response): Promise<never> {
   try {
     const errorData = await response.json() as FastEndpointsErrorResponse;
+    console.log('API Error Response Data:', errorData);
+
+    // Extract error message: use generalErrors if available, otherwise use main message
+    let errorMessage = errorData.message || `HTTP ${response.status}`;
+    if (errorData.errors?.generalErrors && Array.isArray(errorData.errors.generalErrors)) {
+      // Join all general errors into a single string
+      errorMessage = errorData.errors.generalErrors.join('; ');
+    }
+
     throw new AuthError(
       errorData.statusCode || response.status,
       errorData.errors,
-      errorData.message || `HTTP ${response.status}`
+      errorMessage
     );
   } catch (error) {
     if (error instanceof AuthError) {
@@ -144,4 +171,3 @@ async function handleErrorResponse(response: Response): Promise<never> {
 
 
 export default apiFetch;
-
