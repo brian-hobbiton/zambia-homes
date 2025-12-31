@@ -14,7 +14,10 @@ import {
     UserResponseDto,
 } from '@/types/auth';
 
-const API_BASE_URL = 'http://localhost:5191';
+// const API_BASE_URL = 'http://localhost:5191';
+
+//Production
+const API_BASE_URL = 'https://zambiahomesapi-production.up.railway.app';
 
 /**
  * Server Action Result type
@@ -97,7 +100,7 @@ export async function loginAction(
         });
 
         // Return tokens - client will store in localStorage
-        return { success: true, data: response };
+        return {success: true, data: response};
     } catch (error) {
         if (error instanceof AuthError) {
             return {
@@ -107,7 +110,7 @@ export async function loginAction(
                 statusCode: error.statusCode
             };
         }
-        return { success: false, error: 'Login failed', statusCode: 500 };
+        return {success: false, error: 'Login failed', statusCode: 500};
     }
 }
 
@@ -124,7 +127,7 @@ export async function registerAction(
             return {
                 success: false,
                 error: 'Password is required',
-                errors: { password: ['Password is required'] },
+                errors: {password: ['Password is required']},
                 statusCode: 400
             };
         }
@@ -134,7 +137,7 @@ export async function registerAction(
             body: JSON.stringify(data),
         });
 
-        return { success: true, data: response };
+        return {success: true, data: response};
     } catch (error) {
         console.log(error)
         if (error instanceof AuthError) {
@@ -145,7 +148,7 @@ export async function registerAction(
                 statusCode: error.statusCode
             };
         }
-        return { success: false, error: 'Registration failed', statusCode: 500 };
+        return {success: false, error: 'Registration failed', statusCode: 500};
     }
 }
 
@@ -167,10 +170,10 @@ export async function logoutAction(): Promise<ActionResult<void>> {
     try {
         // Server-side logout - add any cleanup needed here
         // Client will clear localStorage tokens separately
-        return { success: true, data: undefined };
+        return {success: true, data: undefined};
     } catch (error) {
         console.error('Logout error:', error);
-        return { success: false, error: 'Logout failed', statusCode: 500 };
+        return {success: false, error: 'Logout failed', statusCode: 500};
     }
 }
 

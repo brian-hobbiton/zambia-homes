@@ -20,6 +20,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useEffect } from 'react';
+import { useFileUpload } from '@/hooks/use-file-upload';
+import { Progress } from '@/components/ui/progress';
 
 export function KYCDocumentUpload() {
   const { user, isLoading: authLoading } = useAuth();
@@ -36,6 +38,20 @@ export function KYCDocumentUpload() {
     issueDate: '',
     expiryDate: '',
     notes: '',
+  });
+
+  // File upload hook for KYC documents
+  const { upload, isUploading, progress, error: uploadError } = useFileUpload({
+    category: 'kyc',
+    onSuccess: (result) => {
+      setFormData((prev) => ({
+        ...prev,
+        documentUrl: result.url,
+      }));
+    },
+    onError: (err) => {
+      setError(err.message);
+    },
   });
 
   // Load existing documents on mount
@@ -78,20 +94,8 @@ export function KYCDocumentUpload() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    try {
-      // Convert file to base64
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const base64 = event.target?.result as string;
-        setFormData((prev) => ({
-          ...prev,
-          documentUrl: base64,
-        }));
-      };
-      reader.readAsDataURL(file);
-    } catch (err) {
-      setError('Failed to read file');
-    }
+    // Upload file to storage
+    await upload(file);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -236,9 +240,21 @@ export function KYCDocumentUpload() {
                     type="file"
                     accept="image/*,.pdf"
                     onChange={handleFileChange}
-                    disabled={isLoading}
-                    required
+                    disabled={isLoading || isUploading}
+                    required={!formData.documentUrl}
                   />
+                  {isUploading && (
+                    <div className="space-y-1">
+                      <Progress value={progress} className="h-2" />
+                      <p className="text-xs text-muted-foreground">Uploading...</p>
+                    </div>
+                  )}
+                  {formData.documentUrl && !isUploading && (
+                    <p className="text-xs text-green-600">✓ Document uploaded successfully</p>
+                  )}
+                  {uploadError && (
+                    <p className="text-xs text-red-600">{uploadError}</p>
+                  )}
                   <p className="text-xs text-muted-foreground">
                     Accepted formats: PNG, JPG, PDF (Max 5MB)
                   </p>

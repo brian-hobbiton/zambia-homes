@@ -7,7 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Upload, FileText, Trash2, CheckCircle } from 'lucide-react';
+import { Upload, FileText, Trash2, CheckCircle, AlertCircle } from 'lucide-react';
+import { useFileUpload } from '@/hooks/use-file-upload';
+import { Progress } from '@/components/ui/progress';
 
 interface DocumentsStepProps {
   property: PropertyResponse;
@@ -25,36 +27,30 @@ const DOCUMENT_TYPES = [
 ];
 
 export default function DocumentsStep({ formData, updateFormDataAction }: DocumentsStepProps) {
-  const [uploading, setUploading] = useState(false);
   const [selectedType, setSelectedType] = useState('id');
+
+  const { upload, isUploading, progress, error } = useFileUpload({
+    category: 'documents',
+    onSuccess: (result) => {
+      const newDocument: ApplicationDocumentRequest = {
+        documentType: selectedType,
+        documentUrl: result.url,
+        fileName: result.fileName,
+      };
+
+      const documents = [...(formData.documents || []), newDocument];
+      updateFormDataAction({ documents });
+    },
+  });
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    try {
-      setUploading(true);
+    await upload(file);
 
-      // TODO: Upload to cloud storage (Cloudinary, S3, etc.)
-      // For now, we'll simulate the upload
-      const mockUrl = `https://example.com/documents/${file.name}`;
-
-      const newDocument: ApplicationDocumentRequest = {
-        documentType: selectedType,
-        documentUrl: mockUrl,
-        fileName: file.name,
-      };
-
-      const documents = [...(formData.documents || []), newDocument];
-      updateFormDataAction({ documents });
-
-      // Reset file input
-      e.target.value = '';
-    } catch (error) {
-      console.error('Upload failed:', error);
-    } finally {
-      setUploading(false);
-    }
+    // Reset file input
+    e.target.value = '';
   };
 
   const removeDocument = (index: number) => {
@@ -95,16 +91,26 @@ export default function DocumentsStep({ formData, updateFormDataAction }: Docume
               type="file"
               accept=".pdf,.jpg,.jpeg,.png"
               onChange={handleFileUpload}
-              disabled={uploading}
+              disabled={isUploading}
               className="cursor-pointer"
             />
           </div>
         </div>
 
-        {uploading && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Upload className="h-4 w-4 animate-pulse" />
-            Uploading...
+        {isUploading && (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Upload className="h-4 w-4 animate-pulse" />
+              Uploading...
+            </div>
+            <Progress value={progress} className="h-2" />
+          </div>
+        )}
+
+        {error && (
+          <div className="flex items-center gap-2 text-sm text-red-600">
+            <AlertCircle className="h-4 w-4" />
+            {error}
           </div>
         )}
       </div>

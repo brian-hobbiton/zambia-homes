@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import {PlusCircle, MoreHorizontal, BedDouble, Bath, Loader2, AlertCircle} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {
@@ -34,6 +33,7 @@ import { useEffect, useState } from 'react';
 import { listLandlordProperties, deleteProperty } from '@/lib/api-properties';
 import { PropertyResponse, PropertyStatus } from '@/types/property';
 import { useAuth } from '@/hooks/use-auth';
+import { StorageImage } from '@/components/ui/storage-image';
 
 export default function LandlordPropertiesPage() {
     const [landlordProperties, setLandlordProperties] = useState<PropertyResponse[]>([]);
@@ -184,12 +184,13 @@ export default function LandlordPropertiesPage() {
                                     return (
                                         <TableRow key={prop.id}>
                                             <TableCell className="hidden sm:table-cell">
-                                                <Image
+                                                <StorageImage
                                                     alt={prop.title}
                                                     className="aspect-square rounded-md object-cover"
-                                                    height="64"
+                                                    height={64}
                                                     src={imageUrl}
-                                                    width="64"
+                                                    width={64}
+                                                    fallbackSrc={`https://picsum.photos/seed/${prop.id}/64/64`}
                                                 />
                                             </TableCell>
                                             <TableCell className="font-medium">{prop.title}</TableCell>
@@ -228,16 +229,25 @@ export default function LandlordPropertiesPage() {
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
                                                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                        <DropdownMenuItem>
-                                                            <Link
-                                                                href={`/landlord/properties/${prop.id}/edit`}>Edit</Link>
+                                                        <DropdownMenuItem asChild>
+                                                            <Link href={`/landlord/properties/${prop.id}`}>
+                                                                View Details
+                                                            </Link>
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuItem>
-                                                            <Link href={`/landlord/properties/${prop.id}/applications`}>View
-                                                                Applications</Link>
+                                                        <DropdownMenuItem asChild>
+                                                            <Link href={`/landlord/properties/${prop.id}/edit`}>
+                                                                Edit
+                                                            </Link>
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuItem className="text-red-600"
-                                                                          onClick={() => handleDeleteProperty(prop.id)}>
+                                                        <DropdownMenuItem asChild>
+                                                            <Link href={`/landlord/properties/${prop.id}/applications`}>
+                                                                View Applications
+                                                            </Link>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            className="text-red-600"
+                                                            onClick={() => handleDeleteProperty(prop.id)}
+                                                        >
                                                             Delete
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>

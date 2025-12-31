@@ -14,7 +14,15 @@ import { usePathname } from 'next/navigation';
 
 const getHeadline = (pathname: string) => {
     if (pathname.includes('/properties/add')) return 'Add New Property';
+    if (pathname.match(/\/properties\/[^/]+\/edit/)) return 'Edit Property';
+    if (pathname.match(/\/properties\/[^/]+\/applications/)) return 'Property Applications';
+    if (pathname.match(/\/properties\/[^/]+$/)) return 'Property Details';
     if (pathname.includes('/properties')) return 'My Properties';
+    if (pathname.includes('/applications/')) return 'Application Review';
+    if (pathname.includes('/applications')) return 'Applications';
+    if (pathname.includes('/leases/')) return 'Lease Details';
+    if (pathname.includes('/leases')) return 'Leases';
+    if (pathname.includes('/inquiries')) return 'Inquiries';
     if (pathname.includes('/messages')) return 'Messages';
     if (pathname.includes('/payouts')) return 'Payouts';
     if (pathname.includes('/profile')) return 'Profile & KYC';

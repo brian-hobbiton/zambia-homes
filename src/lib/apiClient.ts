@@ -6,7 +6,10 @@
 
 import { AuthError, FastEndpointsErrorResponse } from '@/types/auth';
 
-const API_BASE_URL = 'http://localhost:5191';
+// const API_BASE_URL = 'http://localhost:5191';
+
+//Production
+const API_BASE_URL = 'https://zambiahomesapi-production.up.railway.app';
 
 interface RequestOptions extends RequestInit {
   skipAuth?: boolean;

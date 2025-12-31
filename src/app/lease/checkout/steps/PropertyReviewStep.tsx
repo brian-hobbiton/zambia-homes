@@ -1,9 +1,9 @@
 'use client';
 
-import Image from 'next/image';
 import { PropertyResponse } from '@/types/property';
 import { CreateRentalApplicationRequest } from '@/types/application';
 import { MapPin, BedDouble, Bath, Car, Building } from 'lucide-react';
+import { StorageImage } from '@/components/ui/storage-image';
 
 interface PropertyReviewStepProps {
   property: PropertyResponse;
@@ -20,11 +20,12 @@ export default function PropertyReviewStep({ property }: PropertyReviewStepProps
     <div className="space-y-6">
       {/* Property Image */}
       <div className="relative w-full h-64 rounded-lg overflow-hidden">
-        <Image
+        <StorageImage
           src={imageUrl}
           alt={property.title}
           fill
           className="object-cover"
+          fallbackSrc={`https://picsum.photos/seed/${property.id}/800/400`}
         />
       </div>
 

@@ -2,7 +2,6 @@
 
 import {useEffect, useState} from 'react';
 import {useParams} from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
 import {
     BedDouble,
@@ -42,6 +41,7 @@ import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTr
 import {Textarea} from '@/components/ui/textarea';
 import {useToast} from '@/hooks/use-toast';
 import {createPropertyInquiry} from '@/lib/api-inquiries';
+import {StorageImage} from '@/components/ui/storage-image';
 
 export default function PropertyDetailsPage() {
     const params = useParams();
@@ -143,6 +143,7 @@ export default function PropertyDetailsPage() {
         ? property.images
         : [`https://picsum.photos/seed/${property.id}/1200/800`];
 
+
     return (
         <div className="flex flex-col min-h-screen bg-background">
             <SiteHeader/>
@@ -156,12 +157,13 @@ export default function PropertyDetailsPage() {
                                     <CarouselContent>
                                         {propertyImages.map((imageUrl, index) => (
                                             <CarouselItem key={index}>
-                                                <Image
+                                                <StorageImage
                                                     src={imageUrl}
                                                     alt={`${property.title} - Image ${index + 1}`}
                                                     width={1200}
                                                     height={800}
                                                     className="w-full h-96 object-cover rounded-lg"
+                                                    fallbackSrc={`https://picsum.photos/seed/${property.id}/1200/800`}
                                                 />
                                             </CarouselItem>
                                         ))}

@@ -25,13 +25,16 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { generateSummary } from './actions';
-import { useState, useTransition } from 'react';
-import { Loader2, Sparkles, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useState, useTransition, useRef } from 'react';
+import { Loader2, Sparkles, AlertCircle, CheckCircle2, Upload, X, Image as ImageIcon } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { createProperty } from '@/lib/api-properties';
 import { PropertyType, FurnishingStatus } from '@/types/property';
 import { useRouter } from 'next/navigation';
+import { useFileUpload } from '@/hooks/use-file-upload';
+import { Progress } from '@/components/ui/progress';
+import { StorageImage } from '@/components/ui/storage-image';
 
 const amenitiesList = [
   { id: 'garden', label: 'Garden' },
@@ -66,8 +69,36 @@ export default function AddPropertyForm() {
   const [summaryError, setSummaryError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState<{ url: string; fileName: string }[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { user, isLoading } = useAuth();
   const router = useRouter();
+
+  const { upload, isUploading, progress, error: uploadError } = useFileUpload({
+    category: 'properties',
+    onSuccess: (result) => {
+      setUploadedImages((prev) => [...prev, { url: result.url, fileName: result.fileName }]);
+    },
+  });
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    // Upload files one by one
+    for (const file of Array.from(files)) {
+      await upload(file);
+    }
+
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -120,6 +151,7 @@ export default function AddPropertyForm() {
         amenities: values.amenities,
         contactPhone: user.phoneNumber || undefined,
         contactEmail: user.email || undefined,
+        imageUrls: uploadedImages.map((img) => img.url),
       };
 
       console.log('Submitting property:', propertyData);
@@ -294,6 +326,102 @@ export default function AddPropertyForm() {
                 </FormItem>
               )}
             />
+
+            {/* Property Images Upload */}
+            <div className="space-y-4">
+              <div>
+                <FormLabel className="text-base">Property Images</FormLabel>
+                <FormDescription>
+                  Upload high-quality photos of your property. The first image will be the main listing photo.
+                </FormDescription>
+              </div>
+
+              {/* Upload Button */}
+              <div className="flex items-center gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                >
+                  {isUploading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Upload className="mr-2 h-4 w-4" />
+                  )}
+                  Upload Images
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                <span className="text-sm text-muted-foreground">
+                  {uploadedImages.length}/10 images uploaded
+                </span>
+              </div>
+
+              {/* Upload Progress */}
+              {isUploading && (
+                <div className="space-y-2">
+                  <Progress value={progress} className="h-2" />
+                  <p className="text-sm text-muted-foreground">Uploading...</p>
+                </div>
+              )}
+
+              {/* Upload Error */}
+              {uploadError && (
+                <Alert className="border-red-200 bg-red-50">
+                  <AlertCircle className="h-4 w-4 text-red-600" />
+                  <AlertDescription className="text-red-800">{uploadError}</AlertDescription>
+                </Alert>
+              )}
+
+              {/* Uploaded Images Grid */}
+              {uploadedImages.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {uploadedImages.map((image, index) => (
+                    <div key={index} className="relative group">
+                      <div className="aspect-video rounded-lg overflow-hidden border">
+                        <StorageImage
+                          src={image.url}
+                          alt={`Property image ${index + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => removeImage(index)}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                      {index === 0 && (
+                        <span className="absolute bottom-1 left-1 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded">
+                          Main
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Empty State */}
+              {uploadedImages.length === 0 && !isUploading && (
+                <div className="border-2 border-dashed rounded-lg p-8 text-center">
+                  <ImageIcon className="h-10 w-10 mx-auto text-muted-foreground mb-2" />
+                  <p className="text-sm text-muted-foreground">
+                    No images uploaded yet. Click &quot;Upload Images&quot; to add photos.
+                  </p>
+                </div>
+              )}
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <FormField
