@@ -11,7 +11,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
-import { AuthError } from '@/types/auth';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -29,13 +28,24 @@ export default function LoginPage() {
       const email = formData.get('email') as string;
       const password = formData.get('password') as string;
 
-      const response = await loginAction(email, password, rememberMe);
+      const result = await loginAction(email, password, rememberMe);
+
+      if (!result.success) {
+        // Display the error message from the server
+        setError(result.error);
+
+        // Log detailed errors if available
+        if (result.errors) {
+          console.error('Validation errors:', result.errors);
+        }
+        return;
+      }
 
       // Store tokens in localStorage
-      setAuthTokens(response.token, response.refreshToken);
+      setAuthTokens(result.data.token, result.data.refreshToken);
 
       // Redirect based on role
-      const role = response.user.role?.toLowerCase();
+      const role = result.data.user.role?.toLowerCase();
       let redirectPath = '/dashboard';
 
       if (role === 'admin') {
@@ -47,15 +57,8 @@ export default function LoginPage() {
       router.push(redirectPath);
       router.refresh();
     } catch (err) {
-      if (err instanceof AuthError) {
-        // Display backend error message
-        setError(err.message);
-
-        // Log detailed errors if available
-        if (err.errors) {
-          console.error('Validation errors:', err.errors);
-        }
-      } else if (err instanceof Error) {
+      // This should rarely happen now, but keep as fallback
+      if (err instanceof Error) {
         setError(err.message);
       } else {
         setError('An unexpected error occurred');

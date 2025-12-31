@@ -14,7 +14,15 @@ import {
     UserResponseDto,
 } from '@/types/auth';
 
-const API_BASE_URL = 'https://zambiahomesapi-production.up.railway.app';
+const API_BASE_URL = 'http://localhost:5191';
+
+/**
+ * Server Action Result type
+ * Used to return success/error without throwing (which hides messages in production)
+ */
+export type ActionResult<T> =
+    | { success: true; data: T }
+    | { success: false; error: string; errors?: Record<string, string[]>; statusCode?: number };
 
 /**
  * Server-side API fetch (has access to environment variables)
@@ -75,7 +83,7 @@ export async function loginAction(
     email: string,
     password: string,
     rememberMe: boolean = false
-): Promise<LoginResponse> {
+): Promise<ActionResult<LoginResponse>> {
     try {
         const payload: LoginRequest = {
             email,
@@ -89,12 +97,17 @@ export async function loginAction(
         });
 
         // Return tokens - client will store in localStorage
-        return response;
+        return { success: true, data: response };
     } catch (error) {
         if (error instanceof AuthError) {
-            throw error;
+            return {
+                success: false,
+                error: error.message,
+                errors: error.errors,
+                statusCode: error.statusCode
+            };
         }
-        throw new AuthError(500, undefined, 'Login failed');
+        return { success: false, error: 'Login failed', statusCode: 500 };
     }
 }
 
@@ -104,15 +117,16 @@ export async function loginAction(
  */
 export async function registerAction(
     data: UserCreateDto
-): Promise<UserResponseDto> {
+): Promise<ActionResult<UserResponseDto>> {
     try {
         // Validate required fields
         if (!data.password) {
-            throw new AuthError(
-                400,
-                {password: ['Password is required']},
-                'Password is required'
-            );
+            return {
+                success: false,
+                error: 'Password is required',
+                errors: { password: ['Password is required'] },
+                statusCode: 400
+            };
         }
 
         const response = await serverApiFetch<UserResponseDto>('/auth/register', {
@@ -120,13 +134,18 @@ export async function registerAction(
             body: JSON.stringify(data),
         });
 
-        return response;
+        return { success: true, data: response };
     } catch (error) {
         console.log(error)
         if (error instanceof AuthError) {
-            throw error;
+            return {
+                success: false,
+                error: error.message,
+                errors: error.errors,
+                statusCode: error.statusCode
+            };
         }
-        throw new AuthError(500, undefined, 'Registration failed');
+        return { success: false, error: 'Registration failed', statusCode: 500 };
     }
 }
 
@@ -144,13 +163,14 @@ export async function clearAuthTokens(): Promise<void> {
  * Logout server action
  * Note: Tokens are cleared on client side via localStorage
  */
-export async function logoutAction(): Promise<void> {
+export async function logoutAction(): Promise<ActionResult<void>> {
     try {
         // Server-side logout - add any cleanup needed here
         // Client will clear localStorage tokens separately
+        return { success: true, data: undefined };
     } catch (error) {
         console.error('Logout error:', error);
-        throw new AuthError(500, undefined, 'Logout failed');
+        return { success: false, error: 'Logout failed', statusCode: 500 };
     }
 }
 

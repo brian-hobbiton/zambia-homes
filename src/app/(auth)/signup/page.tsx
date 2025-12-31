@@ -4,7 +4,7 @@ import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { registerAction } from '@/lib/auth';
-import { AuthError, UserCreateDto, GenderType, UserRole } from '@/types/auth';
+import { UserCreateDto, GenderType, UserRole } from '@/types/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -51,30 +51,36 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      // Validate required fields
+      // Validate required fields locally
       if (!formData.email) {
-        throw new AuthError(400, { email: ['Email is required'] }, 'Email is required');
+        setError('Email is required');
+        setFieldErrors({ email: ['Email is required'] });
+        setIsLoading(false);
+        return;
       }
       if (!formData.password || formData.password.length < 8) {
-        throw new AuthError(
-          400,
-          { password: ['Password must be at least 8 characters'] },
-          'Password must be at least 8 characters'
-        );
+        setError('Password must be at least 8 characters');
+        setFieldErrors({ password: ['Password must be at least 8 characters'] });
+        setIsLoading(false);
+        return;
       }
 
-      const response = await registerAction(formData);
+      const result = await registerAction(formData);
+
+      if (!result.success) {
+        setError(result.error);
+        if (result.errors) {
+          setFieldErrors(result.errors);
+        }
+        return;
+      }
 
       // Registration successful - redirect to login
       router.push('/login?registered=true');
       router.refresh();
     } catch (err) {
-      if (err instanceof AuthError) {
-        setError(err.message);
-        if (err.errors) {
-          setFieldErrors(err.errors);
-        }
-      } else if (err instanceof Error) {
+      // Fallback error handling
+      if (err instanceof Error) {
         setError(err.message);
       } else {
         setError('An unexpected error occurred');
