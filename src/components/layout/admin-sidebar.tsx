@@ -12,6 +12,7 @@ import {
   Mail,
   FileText,
   CheckCircle,
+  User,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -25,6 +26,7 @@ const navItems = [
   { href: '/admin/verifications', icon: ShieldCheck, label: 'Verifications' },
   { href: '/admin/users', icon: Users, label: 'Users' },
   { href: '/admin/disputes', icon: Gavel, label: 'Disputes' },
+  { href: '/admin/profile', icon: User, label: 'Profile' },
 ];
 
 export default function AdminSidebar() {

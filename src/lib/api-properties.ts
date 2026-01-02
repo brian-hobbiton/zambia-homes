@@ -178,6 +178,15 @@ export async function getPropertyStats(): Promise<PropertyStatsResponse> {
 }
 
 /**
+ * Get landlord's property statistics
+ */
+export async function getLandlordPropertyStats(): Promise<PropertyStatsResponse> {
+    return apiFetch<PropertyStatsResponse>(`${API_BASE}/landlord/stats`, {
+        method: 'GET',
+    });
+}
+
+/**
  * Update property status (Admin only)
  * Use this to approve, activate, suspend, or change any property status
  */

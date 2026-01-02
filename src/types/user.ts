@@ -121,9 +121,23 @@ export interface KYCDocumentResponse {
 }
 
 // Enums
-export type KYCDocumentType = 'passport' | 'nationalId' | 'driverLicense';
+export type KYCDocumentType =
+  | 'nationalID'
+  | 'passport'
+  | 'driversLicense'
+  | 'businessLicense'
+  | 'titleDeed'
+  | 'utilityBill'
+  | 'bankStatement'
+  | 'taxClearance'
+  | 'other';
 
-export type KYCDocumentStatus = 'pending' | 'verified' | 'rejected';
+export type KYCDocumentStatus =
+  | 'pending'
+  | 'underReview'
+  | 'approved'
+  | 'rejected'
+  | 'expired';
 
 // Property reference (minimal, for currentRental)
 export interface PropertyResponse {

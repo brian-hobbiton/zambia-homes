@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { updateMyProfile } from '@/lib/api-user';
 import { UpdateUserRequest } from '@/types/user';
@@ -15,17 +15,30 @@ import { useRouter } from 'next/navigation';
 
 export function UserProfileForm() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [formData, setFormData] = useState<UpdateUserRequest>({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
+    firstName: '',
+    lastName: '',
     middleName: '',
     phoneNumber: '',
     bio: '',
   });
+
+  // Update form data when user data loads
+  useEffect(() => {
+    if (user && !authLoading) {
+      setFormData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        middleName: user.middleName || '',
+        phoneNumber: user.phoneNumber || '',
+        bio: user.bio || '',
+      });
+    }
+  }, [user, authLoading]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

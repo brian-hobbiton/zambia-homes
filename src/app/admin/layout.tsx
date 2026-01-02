@@ -10,12 +10,29 @@ import {
 } from '@/components/ui/sheet';
 import SiteHeader from '@/components/layout/site-header';
 import AdminSidebar from '@/components/layout/admin-sidebar';
+import { usePathname } from 'next/navigation';
+
+const getHeadline = (pathname: string) => {
+  if (pathname === '/admin') return 'Admin Dashboard';
+  if (pathname.includes('/applications')) return 'Applications';
+  if (pathname.includes('/leases')) return 'Leases';
+  if (pathname.includes('/listings')) return 'Property Listings';
+  if (pathname.includes('/inquiries')) return 'Inquiries';
+  if (pathname.includes('/payments')) return 'Payments';
+  if (pathname.includes('/verifications')) return 'KYC Verifications';
+  if (pathname.includes('/users')) return 'User Management';
+  if (pathname.includes('/disputes')) return 'Disputes';
+  if (pathname.includes('/profile')) return 'My Profile';
+  return 'Admin Dashboard';
+};
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-card md:block">
@@ -51,7 +68,7 @@ export default function AdminLayout({
             </SheetContent>
           </Sheet>
           <div className="w-full flex-1">
-            <h1 className="font-semibold text-xl font-headline">Admin Dashboard</h1>
+            <h1 className="font-semibold text-xl font-headline">{getHeadline(pathname)}</h1>
           </div>
           <div className="ml-auto">
             <SiteHeader />

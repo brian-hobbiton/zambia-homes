@@ -129,9 +129,22 @@ export async function uploadKYCDocument(
  * Get current user's KYC documents
  */
 export async function getMyKYCDocuments(): Promise<KYCDocumentResponse[]> {
-    return apiFetch<KYCDocumentResponse[]>(`${API_BASE}/me/kyc`, {
+    const response = await apiFetch<any>(`${API_BASE}/me/kyc`, {
         method: 'GET',
     });
+
+    // Handle both array response and object with documents property
+    if (Array.isArray(response)) {
+        return response;
+    }
+
+    // If response is an object with documents property, return the documents array
+    if (response && Array.isArray(response.documents)) {
+        return response.documents;
+    }
+
+    // Fallback to empty array if neither format
+    return [];
 }
 
 /**
@@ -152,3 +165,39 @@ export async function deleteKYCDocument(documentId: string): Promise<void> {
     });
 }
 
+/**
+ * Get all KYC documents (Admin only)
+ */
+export async function getAllKYCDocuments(status?: string): Promise<KYCDocumentResponse[]> {
+    const query = status ? `?status=${status}` : '';
+    const response = await apiFetch<any>(`${API_BASE}/kyc${query}`, {
+        method: 'GET',
+    });
+
+    // Handle both array response and object with documents property
+    if (Array.isArray(response)) {
+        return response;
+    }
+
+    // If response is an object with documents property, return the documents array
+    if (response && Array.isArray(response.documents)) {
+        return response.documents;
+    }
+
+    // Fallback to empty array if neither format
+    return [];
+}
+
+/**
+ * Verify KYC document (Admin only)
+ */
+export async function verifyKYCDocument(
+    documentId: string,
+    status: string,
+    reason?: string
+): Promise<KYCDocumentResponse> {
+    return apiFetch<KYCDocumentResponse>(`${API_BASE}/kyc/${documentId}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status, reason }),
+    });
+}

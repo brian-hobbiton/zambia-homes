@@ -13,12 +13,14 @@ import {
     UserCreateDto,
     UserResponseDto,
 } from '@/types/auth';
-
-// const API_BASE_URL = 'http://localhost:5191';
+//
+// const API_BASE_URL = 'http://localhost:5191/api';
 
 //Production
-const API_BASE_URL = 'https://zambiahomesapi-production.up.railway.app/api';
+// const API_BASE_URL = 'https://zambiahomesapi-production.up.railway.app/api';
 
+//Vps
+const API_BASE_URL = 'http://72.60.186.223/api';
 /**
  * Server Action Result type
  * Used to return success/error without throwing (which hides messages in production)
@@ -57,6 +59,7 @@ async function serverApiFetch<T = unknown>(
                 errorMessage = errors.generalErrors[0];
             }
 
+            console.log(response)
             throw new AuthError(
                 response.status,
                 errors,
