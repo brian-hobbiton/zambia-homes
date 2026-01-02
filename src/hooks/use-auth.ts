@@ -5,6 +5,7 @@ import {useRouter} from 'next/navigation';
 import {UserResponse} from '@/types/auth';
 import {logoutAction} from '@/lib/auth';
 import {clearAuthTokens} from '@/lib/apiClient';
+import {getCurrentUser} from '@/lib/api-user';
 
 /**
  * Decode JWT token to extract user info
@@ -28,7 +29,7 @@ function decodeToken(token: string): any {
 
 /**
  * Client-side auth hook
- * Reads token from localStorage and decodes user info
+ * Fetches fresh user data from backend instead of relying on token
  * Listens to storage events to sync auth state across tabs
  */
 export function useAuth() {
@@ -36,7 +37,7 @@ export function useAuth() {
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
 
-    const loadUser = useCallback(() => {
+    const loadUser = useCallback(async () => {
         try {
             if (typeof window === 'undefined') {
                 setIsLoading(false);
@@ -63,16 +64,27 @@ export function useAuth() {
                     return;
                 }
 
-                setUser({
-                    id: decoded.sub || decoded.id,
-                    email: decoded.email,
-                    username: decoded.username,
-                    firstName: decoded.firstName,
-                    lastName: decoded.lastName,
-                    fullName: decoded.fullName || `${decoded.firstName || ''} ${decoded.lastName || ''}`.trim(),
-                    role: decoded.role as any,
-                    avatarUrl: decoded.avatarUrl,
-                });
+                // Fetch fresh user data from backend
+                try {
+                    const freshUserData = await getCurrentUser();
+                    setUser({
+                        ...freshUserData,
+                        role: freshUserData.role as any,
+                    });
+                } catch (apiError) {
+                    console.error('Failed to fetch user from API, using token data:', apiError);
+                    // Fallback to token data if API call fails
+                    setUser({
+                        id: decoded.sub || decoded.id,
+                        email: decoded.email,
+                        username: decoded.username,
+                        firstName: decoded.firstName,
+                        lastName: decoded.lastName,
+                        fullName: decoded.fullName || `${decoded.firstName || ''} ${decoded.lastName || ''}`.trim(),
+                        role: decoded.role as any,
+                        avatarUrl: decoded.avatarUrl,
+                    });
+                }
             } else {
                 setUser(null);
             }

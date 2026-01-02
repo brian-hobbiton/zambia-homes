@@ -14,10 +14,10 @@ import {
     UserResponseDto,
 } from '@/types/auth';
 
-// const API_BASE_URL = 'http://localhost:5191';
+const API_BASE_URL = 'http://localhost:5191/api';
 
 //Production
-const API_BASE_URL = 'https://zambiahomesapi-production.up.railway.app/api';
+// const API_BASE_URL = 'https://zambiahomesapi-production.up.railway.app/api';
 
 /**
  * Server Action Result type
@@ -57,6 +57,7 @@ async function serverApiFetch<T = unknown>(
                 errorMessage = errors.generalErrors[0];
             }
 
+            console.log(response)
             throw new AuthError(
                 response.status,
                 errors,

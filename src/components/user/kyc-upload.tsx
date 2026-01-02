@@ -56,13 +56,14 @@ export function KYCDocumentUpload() {
 
   // Load existing documents on mount
   useEffect(() => {
-    if (!authLoading && user?.role === 'landlord') {
+    if (!authLoading && user?.role?.toLocaleLowerCase() === 'landlord') {
       loadDocuments();
     } else {
       setIsLoadingDocuments(false);
     }
   }, [authLoading, user]);
 
+  console.log(user?.role);
   const loadDocuments = async () => {
     try {
       setIsLoadingDocuments(true);
@@ -116,6 +117,21 @@ export function KYCDocumentUpload() {
         throw new Error('Issue and expiry dates are required');
       }
 
+      // Validate that issue date is not in the future
+      const issueDate = new Date(formData.issueDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (issueDate > today) {
+        throw new Error('Issue date cannot be in the future');
+      }
+
+      // Validate that expiry date is after issue date
+      const expiryDate = new Date(formData.expiryDate);
+      if (expiryDate <= issueDate) {
+        throw new Error('Expiry date must be after the issue date');
+      }
+
       const response = await uploadKYCDocument(formData);
 
       setSuccess('Document uploaded successfully!');
@@ -123,7 +139,7 @@ export function KYCDocumentUpload() {
 
       // Reset form
       setFormData({
-        documentType: 'passport',
+        documentType: 'nationalID',
         documentNumber: '',
         documentUrl: '',
         issueDate: '',
@@ -165,10 +181,16 @@ export function KYCDocumentUpload() {
     );
   }
 
-  const documentTypeLabel = {
+  const documentTypeLabel: Record<KYCDocumentType, string> = {
+    nationalID: 'National ID',
     passport: 'Passport',
-    nationalId: 'National ID',
-    driverLicense: 'Driver License',
+    driversLicense: 'Driver License',
+    businessLicense: 'Business License',
+    titleDeed: 'Title Deed',
+    utilityBill: 'Utility Bill',
+    bankStatement: 'Bank Statement',
+    taxClearance: 'Tax Clearance',
+    other: 'Other',
   };
 
   return (
@@ -213,9 +235,15 @@ export function KYCDocumentUpload() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="nationalID">National ID</SelectItem>
                       <SelectItem value="passport">Passport</SelectItem>
-                      <SelectItem value="nationalId">National ID</SelectItem>
-                      <SelectItem value="driverLicense">Driver License</SelectItem>
+                      <SelectItem value="driversLicense">Driver License</SelectItem>
+                      <SelectItem value="businessLicense">Business License</SelectItem>
+                      <SelectItem value="titleDeed">Title Deed</SelectItem>
+                      <SelectItem value="utilityBill">Utility Bill</SelectItem>
+                      <SelectItem value="bankStatement">Bank Statement</SelectItem>
+                      <SelectItem value="taxClearance">Tax Clearance</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -270,8 +298,12 @@ export function KYCDocumentUpload() {
                       value={formData.issueDate}
                       onChange={handleChange}
                       disabled={isLoading}
+                      max={new Date().toISOString().split('T')[0]}
                       required
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Cannot be a future date
+                    </p>
                   </div>
 
                   <div className="space-y-2">
@@ -283,8 +315,12 @@ export function KYCDocumentUpload() {
                       value={formData.expiryDate}
                       onChange={handleChange}
                       disabled={isLoading}
+                      min={formData.issueDate || new Date().toISOString().split('T')[0]}
                       required
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Must be after the issue date
+                    </p>
                   </div>
                 </div>
 
@@ -338,14 +374,16 @@ export function KYCDocumentUpload() {
                               </h4>
                               <Badge
                                 variant={
-                                  doc.status === 'verified'
+                                  doc.status === 'approved'
                                     ? 'default'
                                     : doc.status === 'pending'
                                     ? 'secondary'
+                                    : doc.status === 'underReview'
+                                    ? 'outline'
                                     : 'destructive'
                                 }
                               >
-                                {doc.status}
+                                {doc.status.charAt(0).toUpperCase() + doc.status.slice(1).replace(/([A-Z])/g, ' $1')}
                               </Badge>
                               {doc.isExpired && (
                                 <Badge variant="destructive">Expired</Badge>

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import { getUsers, getUserStats, updateUserStatus, updateUserRole } from '@/lib/api-user';
-import { UserListRequest, UserListResponse, UserStatsResponse } from '@/types/user';
+import { getUsers, getUserStats, updateUserStatus, updateUserRole, getUserById } from '@/lib/api-user';
+import { UserListRequest, UserListResponse, UserStatsResponse, UserResponse } from '@/types/user';
 import { AccountStatus, UserRole } from '@/types/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,8 +25,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Users, Home, Shield, CheckCircle2 } from 'lucide-react';
+import { Users, Home, Shield, CheckCircle2, Eye } from 'lucide-react';
 
 export function AdminUsersPage() {
   const { role, isLoading: authLoading } = useAuth();
@@ -34,6 +41,8 @@ export function AdminUsersPage() {
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<UserStatsResponse | null>(null);
   const [users, setUsers] = useState<UserListResponse | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserResponse | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [filters, setFilters] = useState<UserListRequest>({
     page: 1,
     pageSize: 20,
@@ -99,6 +108,16 @@ export function AdminUsersPage() {
       loadData();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update role');
+    }
+  };
+
+  const handleViewUser = async (userId: string) => {
+    try {
+      const userData = await getUserById(userId);
+      setSelectedUser(userData);
+      setIsDialogOpen(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load user details');
     }
   };
 
@@ -311,7 +330,12 @@ export function AdminUsersPage() {
                           {new Date(user.createdAt).toLocaleDateString()}
                         </TableCell>
                         <TableCell>
-                          <Button variant="ghost" size="sm">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleViewUser(user.id)}
+                          >
+                            <Eye className="h-4 w-4 mr-2" />
                             View
                           </Button>
                         </TableCell>
@@ -362,6 +386,136 @@ export function AdminUsersPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* User Details Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>User Details</DialogTitle>
+            <DialogDescription>
+              View user information and KYC documents
+            </DialogDescription>
+          </DialogHeader>
+          {selectedUser && (
+            <div className="space-y-6">
+              {/* User Info */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Full Name</p>
+                  <p className="text-base">{selectedUser.fullName || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Email</p>
+                  <p className="text-base">{selectedUser.email || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Username</p>
+                  <p className="text-base">{selectedUser.username || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Phone</p>
+                  <p className="text-base">{selectedUser.phoneNumber || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Role</p>
+                  <Badge variant={getRoleColor(selectedUser.role)} className="capitalize">
+                    {selectedUser.role}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Status</p>
+                  <Badge variant={getStatusColor(selectedUser.status)} className="capitalize">
+                    {selectedUser.status}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">KYC Status</p>
+                  {selectedUser.isKYCVerified ? (
+                    <Badge variant="default" className="gap-1">
+                      <CheckCircle2 className="h-3 w-3" />
+                      Verified
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline">Not Verified</Badge>
+                  )}
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Joined</p>
+                  <p className="text-base">{new Date(selectedUser.createdAt).toLocaleDateString()}</p>
+                </div>
+              </div>
+
+              {/* KYC Documents */}
+              {selectedUser.kycDocuments && selectedUser.kycDocuments.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">KYC Documents</h3>
+                  <div className="space-y-4">
+                    {selectedUser.kycDocuments.map((doc: any) => (
+                      <Card key={doc.id}>
+                        <CardContent className="pt-6">
+                          <div className="flex items-start justify-between mb-4">
+                            <div>
+                              <p className="font-medium capitalize">
+                                {doc.documentType.replace(/([A-Z])/g, ' $1').trim()}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                Document Number: {doc.documentNumber}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                Issue Date: {new Date(doc.issueDate).toLocaleDateString()}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                Expiry Date: {new Date(doc.expiryDate).toLocaleDateString()}
+                              </p>
+                            </div>
+                            <Badge
+                              variant={
+                                doc.status === 'verified'
+                                  ? 'default'
+                                  : doc.status === 'pending'
+                                  ? 'secondary'
+                                  : 'destructive'
+                              }
+                            >
+                              {doc.status}
+                            </Badge>
+                          </div>
+                          {doc.documentUrl && (
+                            <img
+                              src={doc.documentUrl}
+                              alt={`${doc.documentType} document`}
+                              className="w-full h-auto rounded-lg border"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="400" height="300" fill="%23f0f0f0"/><text x="50%" y="50%" text-anchor="middle" fill="%23999" font-size="18">Document not available</text></svg>';
+                              }}
+                            />
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {selectedUser.role === 'landlord' && selectedUser.propertyCount !== undefined && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Property Statistics</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Total Properties</p>
+                      <p className="text-2xl font-bold">{selectedUser.propertyCount}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Active Properties</p>
+                      <p className="text-2xl font-bold">{selectedUser.activePropertyCount}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

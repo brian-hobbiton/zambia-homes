@@ -3,7 +3,7 @@
 import {FormEvent, useState} from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
-import {registerAction} from '@/lib/auth';
+import {registerAction, loginAction} from '@/lib/auth';
 import {UserCreateDto, GenderType, UserRole} from '@/types/auth';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
@@ -17,12 +17,16 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { KYCDocumentUpload } from '@/components/user/kyc-upload';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function RegisterPage() {
     const router = useRouter();
+    const { refreshAuth } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
+    const [step, setStep] = useState<1 | 2>(1);
     const [formData, setFormData] = useState<UserCreateDto>({
         password: '',
         gender: 'preferNotToSay',
@@ -98,6 +102,31 @@ export default function RegisterPage() {
                 return;
             }
 
+            // If Landlord, login and move to step 2
+            if (formData.role === 'landlord') {
+                const loginResult = await loginAction(formData.email!, formData.password);
+                if (loginResult.success) {
+                    localStorage.setItem('authToken', loginResult.data.token);
+                    localStorage.setItem('refreshToken', loginResult.data.refreshToken);
+                    localStorage.setItem('tokenExpiry', loginResult.data.tokenExpiry);
+
+                    // Dispatch event to update useAuth
+                    window.dispatchEvent(new Event('auth-change'));
+
+                    // Wait a bit for auth to update
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    refreshAuth();
+
+                    setStep(2);
+                    setIsLoading(false);
+                    return;
+                } else {
+                    // Login failed, but registration succeeded
+                    router.push('/login?registered=true&loginFailed=true');
+                    return;
+                }
+            }
+
             // Registration successful - redirect to login
             router.push('/login?registered=true');
             router.refresh();
@@ -111,6 +140,34 @@ export default function RegisterPage() {
         } finally {
             setIsLoading(false);
         }
+    }
+
+    if (step === 2) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+                <div className="w-full max-w-2xl">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Complete Your Profile</CardTitle>
+                            <CardDescription>
+                                As a landlord, we need to verify your identity. Please upload your KYC documents.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <KYCDocumentUpload />
+                            <div className="mt-6 flex justify-end">
+                                <Button variant="outline" onClick={() => router.push('/landlord')}>
+                                    Skip for now
+                                </Button>
+                                <Button className="ml-2" onClick={() => router.push('/landlord')}>
+                                    Finish
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -321,4 +378,3 @@ export default function RegisterPage() {
         </div>
     );
 }
-
