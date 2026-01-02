@@ -11,17 +11,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: SSH deploy
+      # Step 1: Checkout repo
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Debug GitHub secrets (without exposing private keys!)
+      - name: Debug secrets
+        run: |
+          echo "VPS_HOST: ${{ secrets.VPS_HOST }}"
+          echo "VPS_USER: ${{ secrets.VPS_USER }}"
+          echo "APP_DIR: ${{ secrets.APP_DIR }}"
+          # Do NOT echo VPS_SSH_KEY for security reasons
+          if [ -z "${{ secrets.VPS_SSH_KEY }}" ]; then
+            echo "Error: VPS_SSH_KEY is empty!"
+            exit 1
+          fi
+          echo "SSH key is present (hidden for security)"
+
+      # Step 3: Set up SSH agent
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+
+      # Step 4: SSH deploy
+      - name: SSH deploy web
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
+          host: "${{ secrets.VPS_HOST }}"
+          username: "${{ secrets.VPS_USER }}"
+          key: "${{ secrets.VPS_SSH_KEY }}"
           script: |
-            cd ${{ secrets.APP_DIR }}/zambia-homes
+            echo "Connected to VPS successfully!"
+            echo "Deploying Next.js web app..."
+            cd "${{ secrets.APP_DIR }}/zambia-homes" || exit 1
+            echo "Pulling latest code..."
             git fetch
             git checkout ${{ github.ref_name }}
             git pull origin ${{ github.ref_name }}
-            cd ..
+            echo "Building Docker image..."
             docker compose build web
+            echo "Starting container..."
             docker compose up -d web
+            echo "Deployment complete!"
